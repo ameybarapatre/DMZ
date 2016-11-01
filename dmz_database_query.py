@@ -11,7 +11,7 @@ session = DBSession()
 session.query(users_dmz).delete()
 session.query(services_dmz).delete()
 session.commit()
-new_person = users_dmz(user_name='new person',user_pass=123345345,user_id=1)
+new_person = users_dmz(user_name='new person',user_pass=123345345)
 session.add(new_person)
 session.commit()
 
