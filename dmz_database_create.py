@@ -19,7 +19,7 @@ class services_dmz(Base):
 class users_dmz(Base):
     __tablename__ = 'users_dmz'
     user_grp = Column(Integer ,nullable=True)
-    user_pass = Column(Integer , nullable=False)
+    user_pass = Column(String(250) , nullable=False)
     user_name = Column(String(250), nullable=False)
     user_id = Column(Integer , nullable=False , primary_key=True)
     services  = relationship("services_dmz ",back_populates="users" )
