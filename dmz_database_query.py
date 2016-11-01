@@ -2,27 +2,82 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dmz_database_create import users_dmz, Base, services_dmz
 
-engine = create_engine('sqlite:///dmz_database_version-1.0.db')
-Base.metadata.bind = engine
+class dmz_query():
+    global engine
+    engine = create_engine('sqlite:///dmz_database_version-1.0.db')
+    Base.metadata.bind = engine
+    global DBSession
+    DBSession= sessionmaker(bind=engine)
+    global session
+    session = DBSession()
 
-DBSession = sessionmaker(bind=engine)
+    def __init__(self):
+        return
 
-session = DBSession()
-session.query(users_dmz).delete()
-session.query(services_dmz).delete()
-session.commit()
-new_person = users_dmz(user_name='new person',user_pass=123345345)
-session.add(new_person)
-session.commit()
+    @staticmethod
+    def add_user(name, password):
+        new_person = users_dmz(user_name=name, user_pass=password)
+        session.add(new_person)
+        session.commit()
+        return "Added"
 
-# Insert an Address in the address table
-new_address = services_dmz(service_name='http', service_protocol="TCP",service_port=80 ,users=new_person)
-session.add(new_address)
-session.commit()
+    @staticmethod
+    def delete_user(name , password):
+        session.query(users_dmz).filter(users_dmz.user_name==name,users_dmz.user_pass==password).delete()
+        session.commit()
+        return "Deleted"
 
-print(session.query(users_dmz).all())
-person = session.query(users_dmz).first()
-print(person.user_name)
-print(session.query(services_dmz).first().service_name)
+    @staticmethod
+    def view_user(name,password):
+        return (session.query(users_dmz).filter(users_dmz.user_name==name,users_dmz.user_pass==password).first())
 
+    @staticmethod
+    def delete_all_users():
+        session.query(users_dmz).delete()
+        session.query(services_dmz).delete()
+        session.commit()
+        return "Deleted All Users"
+
+    @staticmethod
+    def delete_all_services(self):
+        session.query(services_dmz).delete()
+        session.commit()
+        return "Deleted All Services"
+
+    @staticmethod
+    def add_grp(name ,grpid , password):
+        session.query(users_dmz).filter(users_dmz.user_name==name,users_dmz.user_pass==password).update({"user_grp":grpid})
+        session.commit()
+        return "Group Added"
+
+    @staticmethod
+    def remove_grp(name, grpid, password):
+        session.query(users_dmz).filter(users_dmz.user_name == name, users_dmz.user_pass == password).update({"user_grp": 0})
+        session.commit()
+        return "Group Removed"
+
+    @staticmethod
+    def add_service(user, protocol,port ,name):
+        new_address = services_dmz(service_name=name, service_protocol=protocol, service_port=port, users=user)
+        session.add(new_address)
+        session.commit()
+        return "Service Added"
+
+    @staticmethod
+    def remove_service(user , protocol  , port , name ):
+        session.query(services_dmz).filter(services_dmz.service_name==name,services_dmz.service_port==port,services_dmz.service_protocol==protocol,services_dmz.users==user).delete()
+        session.commit()
+        return "Service Removed"
+
+    @staticmethod
+    def add_service_grp(grp , protocol,port ,name):
+        for user in session.query(users_dmz).filter(users_dmz.user_grp==grp).all():
+            dmz_query.add_service(user, protocol,port ,name)
+        return "Service Added to Group"
+
+    @staticmethod
+    def remove_service_grp(grp, protocol, port, name):
+        for user in session.query(users_dmz).filter(users_dmz.user_grp == grp).all():
+            dmz_query.remove_service(user, protocol, port, name)
+        return "Service Removed from Group"
 
