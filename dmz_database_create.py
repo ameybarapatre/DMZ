@@ -22,7 +22,9 @@ class users_dmz(Base):
     user_pass = Column(String(250) , nullable=False)
     user_name = Column(String(250), nullable=False)
     user_id = Column(Integer , nullable=False , primary_key=True)
+    user_ip = Column(String(250))
     services  = relationship("services_dmz ",back_populates="users" )
+
 
 
 engine = create_engine('sqlite:///dmz_database_version-1.0.db')
