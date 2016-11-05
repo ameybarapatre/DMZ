@@ -20,14 +20,3 @@ def rules_daemon(host='localhost'):
 
 if __name__=='__main__':
     rules_daemon()
-"""
-print(r.set('full stack', 'python'))
-
-print(r.keys())
-
-print(r.get('full stack'))
-
-print(r.delete('twilio'))
-print (r.rpush('rules',1,2,22,3))
-print(r.lpop('rules'))
-r.flushdb()"""
