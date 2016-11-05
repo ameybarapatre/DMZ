@@ -80,4 +80,10 @@ class dmz_query():
         for user in session.query(users_dmz).filter(users_dmz.user_grp == grp).all():
             dmz_query.remove_service(user, protocol, port, name)
         return "Service Removed from Group"
+    @staticmethod
+    def add_user_ip(name , password , ip):
+        session.query(users_dmz).filter(users_dmz.user_name == name, users_dmz.user_pass == password).update({"user_ip": ip})
+        #find all rules , push rules
+        session.commit()
+
 
