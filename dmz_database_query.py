@@ -29,8 +29,10 @@ class dmz_query():
 
     @staticmethod
     def delete_all_users():
+        for each in session.query(users_dmz).all():
+            dmz_query.delete_user(each.user_name, each.user_pass)
         session.query(users_dmz).delete()
-        session.query(services_dmz).delete()
+
         session.commit()
         return "Deleted All Users"
 
@@ -59,13 +61,13 @@ class dmz_query():
 
         new_address = services_dmz(service_name=name, service_protocol=protocol, service_port=port, users=user)
         session.add(new_address)
-
-        temp['ip'] = user.user_ip
-        temp['port'] = protocol
-        temp['protocol'] = port
-        temp['action']='ACCEPT'
-        rules.append(temp)
-        push_rule(rules)
+        if user.user_ip != None:
+            temp['ip'] = user.user_ip
+            temp['port'] = port
+            temp['protocol'] = protocol
+            temp['action']='ACCEPT'
+            rules.append(temp)
+            push_rule(rules)
 
         session.commit()
         return "Service Added"
@@ -76,13 +78,13 @@ class dmz_query():
         temp = {}
 
         session.query(services_dmz).filter(services_dmz.service_name==name,services_dmz.service_port==port,services_dmz.service_protocol==protocol,services_dmz.users==user).delete()
-
-        temp['ip'] = user.user_ip
-        temp['port'] = protocol
-        temp['protocol'] = port
-        temp['action'] ='DROP'
-        rules.append(temp)
-        push_rule(rules)
+        if user.user_ip != None:
+            temp['ip'] = user.user_ip
+            temp['port'] = port
+            temp['protocol'] = protocol
+            temp['action'] ='DROP'
+            rules.append(temp)
+            push_rule(rules)
 
         session.commit()
         return "Service Removed"

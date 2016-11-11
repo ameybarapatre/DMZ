@@ -7,7 +7,7 @@ def rules_daemon(host='localhost'):
     print("listening")
     f = False
     i = 0
-    #r.delete('rules')
+    r.delete('rules')
     for message in p.listen():
         if f :
             print(message)
