@@ -12,8 +12,8 @@ def rules_daemon(host='localhost'):
     for message in p.listen():
         if f :
             print(message)
-            rules = r.lrange('rules', i, i+int(message['data']))
-            i += int(message['data'])
+            rules = r.lrange('rules', i, r.llen('rules'))
+            i = r.llen('rules')
             print(i,rules)
             for each in rules:
                d = ast.literal_eval(each.decode('utf-8'))
