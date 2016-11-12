@@ -101,7 +101,8 @@ class dmz_query():
             temp['action']="DROP"
             rules.append(str(temp))
         session.query(services_dmz).filter(services_dmz.users == user).delete()
-        push_rule(rules)
+        if len(rules)!=0:
+            push_rule(rules)
 
         session.query(users_dmz).filter(users_dmz.user_name == name, users_dmz.user_pass == password).delete()
         session.commit()
@@ -131,7 +132,8 @@ class dmz_query():
                 temp['protocol']=rule.service_protocol
                 temp['action']='ACCEPT'
                 rules.append(str(temp))
-        push_rule(rules)
+        if len(rules)!=0:
+            push_rule(rules)
         session.commit()
         return
 

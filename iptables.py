@@ -3,21 +3,22 @@ import iptc
 def dropAllInbound():
     chain = iptc.Chain(iptc.Table(iptc.Table.FILTER), 'INPUT')
     rule = iptc.Rule()
-    rule.in_interface = 'eth+'
     rule.target = iptc.Target(rule, 'DROP')
     chain.insert_rule(rule)
 
 
 
 
-def allow(rule):
+def fire_rule(rul):
+    print(rul , 'recieved')
     chain = iptc.Chain(iptc.Table(iptc.Table.FILTER), 'INPUT')
     rule = iptc.Rule()
-    rule.in_interface = 'eth+'
-    rule.protocol = 'tcp'
+    rule.protocol = rul['protocol']
+    rule.src=rul['ip']+"/255.255.255.0"
     match = rule.create_match('tcp')
-    match.dport = '80'
-    rule.target = iptc.Target(rule, 'ACCEPT')
+    match.dport = str(rul['port'])
+
+    rule.target = iptc.Target(rule, rul['action'])
     chain.insert_rule(rule)
 
 
@@ -26,3 +27,22 @@ def startClean():
     chainIn.flush()
     chainOut = iptc.Chain(iptc.Table(iptc.Table.FILTER), 'OUTPUT')
     chainOut.flush()
+
+if __name__=='__main__':
+    startClean()
+    print('cleaned')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
